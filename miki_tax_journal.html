@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIKIタックス・ジャーナル</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", serif;
+        background: #f5f2ea;
+        color: #1a1a1a;
+        line-height: 1.6;
+        padding: 20px;
+    }
+    
+    .newspaper {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #fffdf7;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 40px;
+    }
+    
+    /* ヘッダー（題字部分） */
+    .masthead {
+        border-top: 4px double #8b0000;
+        border-bottom: 4px double #8b0000;
+        padding: 20px 0;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .masthead-left {
+        font-size: 12px;
+        color: #555;
+        line-height: 1.8;
+    }
+    
+    .masthead-center {
+        text-align: center;
+        flex: 1;
+    }
+    
+    .masthead-title {
+        font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+        font-size: 48px;
+        font-weight: bold;
+        letter-spacing: 8px;
+        color: #8b0000;
+        margin-bottom: 5px;
+    }
+    
+    .masthead-subtitle {
+        font-size: 13px;
+        color: #666;
+        letter-spacing: 3px;
+    }
+    
+    .masthead-right {
+        font-size: 12px;
+        color: #555;
+        text-align: right;
+        line-height: 1.8;
+    }
+    
+    /* カテゴリーバー */
+    .category-bar {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 8px 15px;
+        font-size: 13px;
+        letter-spacing: 4px;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .category-bar span {
+        font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+    
+    /* メインコンテンツ */
+    .main-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+    
+    /* トップ記事 */
+    .top-article {
+        border-right: 1px solid #ccc;
+        padding-right: 30px;
+    }
+    
+    .article-label {
+        display: inline-block;
+        background: #8b0000;
+        color: #fff;
+        padding: 3px 12px;
+        font-size: 12px;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+        font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+    
+    .top-article h1 {
+        font-size: 38px;
+        line-height: 1.3;
+        margin-bottom: 15px;
+        color: #1a1a1a;
+        letter-spacing: 1px;
+    }
+    
+    .top-article .subhead {
+        font-size: 17px;
+        color: #444;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #1a1a1a;
+        font-weight: normal;
+        line-height: 1.5;
+    }
+    
+    .top-thumbnail {
+        position: relative;
+        margin-bottom: 20px;
+        cursor: pointer;
+        overflow: hidden;
+    }
+    
+    .top-thumbnail img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+    
+    .top-thumbnail:hover img {
+        transform: scale(1.02);
+    }
+    
+    .play-button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(139, 0, 0, 0.9);
+        color: #fff;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        pointer-events: none;
+    }
+    
+    .caption {
+        font-size: 12px;
+        color: #666;
+        font-style: italic;
+        margin-bottom: 20px;
+        padding: 5px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .article-body {
+        font-size: 15px;
+        line-height: 1.9;
+        color: #222;
+        column-count: 2;
+        column-gap: 25px;
+        column-rule: 1px solid #ddd;
+    }
+    
+    .article-body p {
+        margin-bottom: 12px;
+        text-align: justify;
+    }
+    
+    .article-body p:first-child::first-letter {
+        font-size: 38px;
+        float: left;
+        line-height: 1;
+        padding: 3px 8px 0 0;
+        font-weight: bold;
+        color: #8b0000;
+    }
+    
+    /* サイドバー（関連記事） */
+    .sidebar {
+        padding-left: 10px;
+    }
+    
+    .sidebar-label {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 5px 12px;
+        font-size: 12px;
+        letter-spacing: 3px;
+        margin-bottom: 15px;
+        font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+        display: inline-block;
+    }
+    
+    .related-article {
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .related-article:last-child {
+        border-bottom: none;
+    }
+    
+    .related-thumbnail {
+        position: relative;
+        margin-bottom: 12px;
+        cursor: pointer;
+        overflow: hidden;
+    }
+    
+    .related-thumbnail img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+    
+    .related-thumbnail:hover img {
+        transform: scale(1.03);
+    }
+    
+    .play-button-small {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(139, 0, 0, 0.9);
+        color: #fff;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        pointer-events: none;
+    }
+    
+    .related-article h3 {
+        font-size: 20px;
+        line-height: 1.4;
+        margin-bottom: 8px;
+        color: #1a1a1a;
+    }
+    
+    .related-article h3 a {
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+    
+    .related-article h3 a:hover {
+        color: #8b0000;
+    }
+    
+    .related-article p {
+        font-size: 13px;
+        color: #555;
+        line-height: 1.7;
+    }
+    
+    /* 下段記事 */
+    .bottom-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 25px;
+        padding-top: 25px;
+        border-top: 3px double #1a1a1a;
+        margin-bottom: 30px;
+    }
+    
+    .bottom-article {
+        padding: 0 5px;
+    }
+    
+    .bottom-thumbnail {
+        position: relative;
+        margin-bottom: 12px;
+        cursor: pointer;
+        overflow: hidden;
+    }
+    
+    .bottom-thumbnail img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+    
+    .bottom-thumbnail:hover img {
+        transform: scale(1.03);
+    }
+    
+    .category-tag {
+        display: inline-block;
+        background: #444;
+        color: #fff;
+        padding: 2px 8px;
+        font-size: 10px;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+    
+    .category-tag.world { background: #1e5a8e; }
+    .category-tag.domestic { background: #2e7d32; }
+    .category-tag.protest { background: #c62828; }
+    
+    .bottom-article h3 {
+        font-size: 18px;
+        line-height: 1.4;
+        margin-bottom: 10px;
+    }
+    
+    .bottom-article h3 a {
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+    
+    .bottom-article h3 a:hover {
+        color: #8b0000;
+    }
+    
+    .bottom-article p {
+        font-size: 13px;
+        color: #444;
+        line-height: 1.7;
+    }
+    
+    /* コラム（犬のジョン） */
+    .column-section {
+        background: #faf6e8;
+        border: 2px solid #8b7355;
+        padding: 25px;
+        margin-top: 20px;
+        position: relative;
+    }
+    
+    .column-section::before {
+        content: "コラム";
+        position: absolute;
+        top: -12px;
+        left: 20px;
+        background: #8b7355;
+        color: #fff;
+        padding: 3px 15px;
+        font-size: 12px;
+        letter-spacing: 3px;
+        font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+    
+    .column-content {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+    
+    .column-thumbnail {
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+    }
+    
+    .column-thumbnail img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    
+    .column-label {
+        font-size: 11px;
+        color: #8b7355;
+        letter-spacing: 4px;
+        margin-bottom: 5px;
+        font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+    
+    .column-section h3 {
+        font-size: 24px;
+        margin-bottom: 12px;
+        color: #1a1a1a;
+    }
+    
+    .column-section h3 a {
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+    
+    .column-section h3 a:hover {
+        color: #8b7355;
+    }
+    
+    .column-section p {
+        font-size: 14px;
+        line-height: 1.8;
+        color: #444;
+    }
+    
+    /* フッター */
+    .footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 2px solid #1a1a1a;
+        text-align: center;
+        font-size: 11px;
+        color: #666;
+        letter-spacing: 2px;
+    }
+    
+    /* リンク全体のスタイル */
+    a.article-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+    
+    a.article-link:hover .top-thumbnail img,
+    a.article-link:hover .related-thumbnail img,
+    a.article-link:hover .bottom-thumbnail img,
+    a.article-link:hover .column-thumbnail img {
+        transform: scale(1.03);
+    }
+    
+    /* レスポンシブ */
+    @media (max-width: 900px) {
+        .main-content {
+            grid-template-columns: 1fr;
+        }
+        .top-article {
+            border-right: none;
+            padding-right: 0;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 20px;
+        }
+        .bottom-section {
+            grid-template-columns: 1fr;
+        }
+        .article-body {
+            column-count: 1;
+        }
+        .masthead-title {
+            font-size: 32px;
+            letter-spacing: 4px;
+        }
+        .column-content {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="newspaper">
+    
+    <!-- 題字部分 -->
+    <div class="masthead">
+        <div class="masthead-left">
+            第1号<br>
+            2026年4月19日<br>
+            日曜日
+        </div>
+        <div class="masthead-center">
+            <div class="masthead-title">MIKIタックス・ジャーナル</div>
+            <div class="masthead-subtitle">MIKI TAX JOURNAL ─ 世界の税を読み解く</div>
+        </div>
+        <div class="masthead-right">
+            週刊<br>
+            発行：MIKI編集部<br>
+            定価：無料
+        </div>
+    </div>
+    
+    <!-- カテゴリーバー -->
+    <div class="category-bar">
+        <span>今週の特集</span>
+        <span>世界の税制改革と納税者運動</span>
+        <span>全6本</span>
+    </div>
+    
+    <!-- メインコンテンツ -->
+    <div class="main-content">
+        
+        <!-- トップ記事：ブラジル消費税の実験 -->
+        <div class="top-article">
+            <span class="article-label">トップ記事</span>
+            <h1>ブラジル、消費税大改革の実験<br>世界が注目する壮大な試み</h1>
+            <p class="subhead">複雑怪奇とされたブラジルの消費税制度。その抜本改革が今、現実のものとなりつつある。南米の大国で何が起きているのか。</p>
+            
+            <a href="https://www.youtube.com/shorts/IWMi8USGHX4" target="_blank" class="article-link">
+                <div class="top-thumbnail">
+                    <img src="https://img.youtube.com/vi/IWMi8USGHX4/maxresdefault.jpg" 
+                         onerror="this.src='https://img.youtube.com/vi/IWMi8USGHX4/hqdefault.jpg'" 
+                         alt="ブラジル消費税の実験">
+                    <div class="play-button">▶</div>
+                </div>
+            </a>
+            <div class="caption">▲ クリックで動画再生｜YouTube Shortsで視聴</div>
+            
+            <div class="article-body">
+                <p>ブラジルが取り組んでいる消費税制度の大改革は、税制の世界における壮大な社会実験と呼ぶにふさわしい。連邦、州、市が個別に課税し、迷宮のようだった税体系を、一つのVAT（付加価値税）に統合しようという試みである。</p>
+                <p>改革の背景には、企業が税務対応に費やす膨大な時間とコストがあった。ブラジルでは税務申告に世界最長の時間を要するとされ、経済活動の重荷となってきた。</p>
+                <p>この実験が成功すれば、同じく複雑な税制を抱える国々にとって重要な先例となる。日本を含む各国の税務当局が、その行方を固唾を飲んで見守っている。</p>
+                <p>動画では、この歴史的な税制改革の全体像と、そこに至るまでの道のりを簡潔に解説している。税制に関心を持つすべての読者に視聴をお勧めしたい。</p>
+            </div>
+        </div>
+        
+        <!-- サイドバー（関連記事） -->
+        <div class="sidebar">
+            <span class="sidebar-label">関連記事</span>
+            
+            <div class="related-article">
+                <a href="https://www.youtube.com/shorts/I-AsjYb21eE" target="_blank" class="article-link">
+                    <div class="related-thumbnail">
+                        <img src="https://img.youtube.com/vi/I-AsjYb21eE/maxresdefault.jpg" 
+                             onerror="this.src='https://img.youtube.com/vi/I-AsjYb21eE/hqdefault.jpg'"
+                             alt="ブラジルVAT">
+                        <div class="play-button-small">▶</div>
+                    </div>
+                    <h3>世界を変えるかもしれない<br>ブラジルVAT</h3>
+                </a>
+                <p>ブラジル発の付加価値税改革が、国境を超えて各国の税制に影響を与える可能性を探る。理論と現実の交差点に立つ、この壮大なプロジェクトの意義を問う続編。</p>
+            </div>
+            
+            <div class="related-article">
+                <a href="https://www.youtube.com/shorts/rIW7MpHR8TU" target="_blank" class="article-link">
+                    <div class="related-thumbnail">
+                        <img src="https://img.youtube.com/vi/rIW7MpHR8TU/maxresdefault.jpg" 
+                             onerror="this.src='https://img.youtube.com/vi/rIW7MpHR8TU/hqdefault.jpg'"
+                             alt="東京財団">
+                        <div class="play-button-small">▶</div>
+                    </div>
+                    <h3>東京財団が提言<br>給付付き税額控除とは</h3>
+                </a>
+                <p>日本の税制改革論議で注目を集める「給付付き税額控除」。東京財団の政策提言をもとに、その仕組みと狙いを解説する。</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 下段記事 -->
+    <div class="bottom-section">
+        
+        <!-- インド -->
+        <div class="bottom-article">
+            <a href="https://www.youtube.com/shorts/8ro3eHJUOBA" target="_blank" class="article-link">
+                <div class="bottom-thumbnail">
+                    <img src="https://img.youtube.com/vi/8ro3eHJUOBA/maxresdefault.jpg" 
+                         onerror="this.src='https://img.youtube.com/vi/8ro3eHJUOBA/hqdefault.jpg'"
+                         alt="インド税務職員">
+                    <div class="play-button-small">▶</div>
+                </div>
+                <span class="category-tag world">国際</span>
+                <h3>インド税務職員の反乱<br>現場から上がる声</h3>
+            </a>
+            <p>税を徴収する側からの異例の行動——インドで税務職員たちが声を上げた。現場で何が起きているのか、その背景に迫る。</p>
+        </div>
+        
+        <!-- アメリカ -->
+        <div class="bottom-article">
+            <a href="https://www.youtube.com/shorts/2nnTDllBP80" target="_blank" class="article-link">
+                <div class="bottom-thumbnail">
+                    <img src="https://img.youtube.com/vi/2nnTDllBP80/maxresdefault.jpg" 
+                         onerror="this.src='https://img.youtube.com/vi/2nnTDllBP80/hqdefault.jpg'"
+                         alt="アメリカ納税拒否">
+                    <div class="play-button-small">▶</div>
+                </div>
+                <span class="category-tag protest">社会運動</span>
+                <h3>米・良心的納税拒否運動<br>再びの高まり</h3>
+            </a>
+            <p>税金の使途に異を唱え、納税を拒否する運動がアメリカで再燃している。歴史ある抗議運動の今と、その思想的背景を紹介。</p>
+        </div>
+        
+        <!-- 解説 -->
+        <div class="bottom-article">
+            <span class="category-tag domestic">解説</span>
+            <h3>編集者より</h3>
+            <p>今週は世界3大陸の税制をめぐる動きを取り上げました。ブラジルの抜本改革、インドの内部告発、アメリカの市民運動——税は単なる財政問題ではなく、社会のあり方そのものを映す鏡であることを、これらの動きは教えてくれます。日本の「給付付き税額控除」議論も、この大きな潮流の中で読み解くべきテーマです。</p>
+        </div>
+    </div>
+    
+    <!-- コラム：犬のジョン -->
+    <div class="column-section">
+        <div class="column-content">
+            <a href="https://www.youtube.com/shorts/EwOdX_18hWs" target="_blank" class="article-link">
+                <div class="column-thumbnail">
+                    <img src="https://img.youtube.com/vi/EwOdX_18hWs/maxresdefault.jpg" 
+                         onerror="this.src='https://img.youtube.com/vi/EwOdX_18hWs/hqdefault.jpg'"
+                         alt="犬のジョン">
+                    <div class="play-button-small">▶</div>
+                </div>
+            </a>
+            <div>
+                <div class="column-label">ちょっといい話</div>
+                <h3><a href="https://www.youtube.com/shorts/EwOdX_18hWs" target="_blank">犬のジョン</a></h3>
+                <p>硬いニュースが続いた今週の紙面。最後はちょっと肩の力を抜いて、犬のジョンにまつわるお話をお届けします。税金も大事だけれど、時には笑いも大事。MIKIタックス・ジャーナルからの、ささやかな贈り物です。</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- フッター -->
+    <div class="footer">
+        MIKI TAX JOURNAL ─ 各記事のサムネイルまたはタイトルをクリックするとYouTubeで動画が再生されます<br>
+        © 2026 MIKI Tax Journal. All videos are linked to the original YouTube content.
+    </div>
+    
+</div>
+
+</body>
+</html>
